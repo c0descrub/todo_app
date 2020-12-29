@@ -22,6 +22,13 @@ const TodoApplicationContainer = styled.div`
   background-color: ${props => props.darkmode ? '#111111' : 'white'};
   color: ${props => props.darkmode ? 'white' : '#111111'};
 
+  input {
+    &:focus {
+      outline: none;
+      border: none;
+    }
+  }
+
 `;
 
 const TaskInputButton = styled.button`
@@ -30,6 +37,10 @@ const TaskInputButton = styled.button`
     border-radius: 0px;
     color: white;
     padding: 14px 20px 12px 20px;
+    &:focus{
+            border: none;
+            outline: none;
+        }
 `
 
 const TaskInput = styled.input`
@@ -42,10 +53,23 @@ const TaskInput = styled.input`
   margin-bottom: 20px;
 
 `
+
+/*
+        
+        window.localStorage.setItem('someKeyValue', 'Some data as a string');
+        window.localStorage.getItem('someKeyValue');
+        window.localStorage.removeItem('someKeyValue');
+        window.localStorage.clear();
+
+*/
+
+
 const TodoApplication = () => {
   const [inputValue, setInputValue] = useState("");
 
-  const [todoArray, setTodoArray] = useState([]);
+  const storedTodos = (window.localStorage.getItem('todos') || null)
+
+  const [todoList, setTodoList] = useState(storedTodos ? JSON.parse(storedTodos) : []);
 
   const [darkmode, setDarkmode] = useState(false);
 
@@ -65,8 +89,7 @@ const TodoApplication = () => {
         return alert('You need to enter a task!')
     } 
 
-    
-    const lowercaseArray =  todoArray.map(function(item, index){
+    const lowercaseArray =  todoList.map(function(item, index){
         return item.name.toLowerCase()
     })
 
@@ -75,36 +98,65 @@ const TodoApplication = () => {
         return alert('You already have this task!')
     }
 
-    const newItem = {name: inputValue, completed: false}
+    const newItem = { name: inputValue, completed: false }
+    const newTodoList = [...todoList, newItem]
+    
+    window.localStorage.setItem('todos', JSON.stringify(newTodoList));
 
     //Add the todo need current input value then add that to the todo array. (spread thingy)
-    //Create new array. Spreading old array into new array. Adding input value as the last item in the new array.
-    setTodoArray([...todoArray, newItem]);
+    //Create new array. Spreading old array into new array. Adding input value as the last item in the new array.   
+    setTodoList(newTodoList);
+
     setInputValue("");
   }
   
   const [taskCounter, setTaskCounter] = useState('You have no tasks.')
   useEffect(() => {
-    if(todoArray.length == 0) {
+    if(todoList.length == 0) {
       setTaskCounter(`You have no tasks.`)
-    } else if(todoArray.length == 1) {
-      setTaskCounter(`You have ${todoArray.length} task to complete`)
-    } else if(todoArray.length >= 2) {
-      setTaskCounter(`You have ${todoArray.length} tasks to complete`)
+    } else if(todoList.length == 1) {
+      setTaskCounter(`You have ${todoList.length} task to complete`)
+    } else if(todoList.length >= 2) {
+      setTaskCounter(`You have ${todoList.length} tasks to complete`)
     }
-  }, [todoArray])
+  }, [todoList])
+
+  const [filter, setFilter] = useState('all')
+
+  const handleFilterChange = (event) => {
+    setFilter(event.target.value)
+  }
 
   return (
     <TodoApplicationContainer darkmode={darkmode}>
       <input type="checkbox" checked={darkmode} onChange={() =>setDarkmode(d => !d)}/> Dark / Light
       <h1>Your tasks</h1>
       <h2>{taskCounter}</h2>
+      <RadioField currentSelectedFilter={filter} handleChange={handleFilterChange} label="Incomplete Tasks" id="incomplete" />
+      <RadioField currentSelectedFilter={filter} handleChange={handleFilterChange} label="Completed Tasks" id="completed" />
+
+
+      <input onChange={handleFilterChange} name="filters" type="radio" id="all" value="all" checked={filter === 'all'} />
+      <label htmlFor="all">All</label>
+
+      <br />
+      <br />
       <TaskInput placeholder="Add a new task"  onChange={textInput} value={inputValue} type="text"></TaskInput>
       <TaskInputButton onClick={addTodo}> + </TaskInputButton>
-
-    <TodoList todoArray={todoArray} setTodoArray={setTodoArray}/>
-    </TodoApplicationContainer>>
+      
+      <TodoList filter={filter} todoList={todoList} setTodoList={setTodoList}/>
+  
+    </TodoApplicationContainer>
   );
 };
+
+const RadioField = ({label, id, handleChange, currentSelectedFilter}) => {
+  return (
+    <>
+      <input onChange={handleChange} name="filters" type="radio" id={id} value={id} checked={id === currentSelectedFilter} />
+      <label htmlFor={id}>{label}</label>
+    </>
+  )
+}
 
 export default TodoApplication;
