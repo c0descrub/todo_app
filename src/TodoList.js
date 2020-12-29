@@ -99,3 +99,8 @@ const TodoList = ({ todoList, setTodoList, filter }) => {
 }
 
 export default TodoList
+
+// On first load check local storage and nothing is stored.
+// Use defaults. (false)
+// Subsiqent loads, something is stored.
+// Use those insead of defaults.

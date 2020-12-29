@@ -70,8 +70,8 @@ const TodoApplication = () => {
   const storedTodos = (window.localStorage.getItem('todos') || null)
 
   const [todoList, setTodoList] = useState(storedTodos ? JSON.parse(storedTodos) : []);
-
-  const [darkmode, setDarkmode] = useState(false);
+  const savedDarkMode = window.localStorage.getItem('darkmode') === 'true' ? true : false
+  const [darkmode, setDarkmode] = useState(savedDarkMode);
 
   function textInput(event) {
     setInputValue(event.target.value);
@@ -127,9 +127,15 @@ const TodoApplication = () => {
     setFilter(event.target.value)
   }
 
+  function handleThemeChange() {
+      setDarkmode(!darkmode)
+      window.localStorage.setItem('darkmode', !darkmode)
+  }
+
+
   return (
     <TodoApplicationContainer darkmode={darkmode}>
-      <input type="checkbox" checked={darkmode} onChange={() =>setDarkmode(d => !d)}/> Dark / Light
+      <input type="checkbox" checked={darkmode} onChange={handleThemeChange}/> Dark / Light
       <h1>Your tasks</h1>
       <h2>{taskCounter}</h2>
       <RadioField currentSelectedFilter={filter} handleChange={handleFilterChange} label="Incomplete Tasks" id="incomplete" />
