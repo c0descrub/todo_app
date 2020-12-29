@@ -62,10 +62,16 @@ const TodoApplication = () => {
   }
 
   function taskCount() {
-    if(todoArray.length === 1) {
-      document.getElementById('task-count').innerHTML = "task"
-    } else if(todoArray.length > 1) {
-      document.getElementById('task-count').innerHTML = "tasks"
+    if(todoArray.length == 1) {
+      document.getElementById('task-count').innerHTML ="task"
+    }
+    
+    // else if(todoArray.length == 0) {
+    //   document.getElementById('task-count').innerHTML = "no tasks!"
+    // }
+
+    else if(todoArray.length >= 2) {
+      document.getElementById('task-count').innerHTML ="tasks"
     }
   }
 
