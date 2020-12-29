@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import styled from "styled-components";
 import TodoList from "./TodoList"
 
@@ -15,11 +15,33 @@ const TodoApplicationContainer = styled.div`
       padding: 15px;
   }
 
+  h2 {
+    padding-bottom: 20px;
+  }
+
   background-color: ${props => props.darkmode ? '#111111' : 'white'};
   color: ${props => props.darkmode ? 'white' : '#111111'};
 
 `;
 
+const TaskInputButton = styled.button`
+    border: none;
+    background: #008ec4;
+    border-radius: 0px;
+    color: white;
+    padding: 14px 20px 12px 20px;
+`
+
+const TaskInput = styled.input`
+  width: 70%;
+  border: none;
+  background: #e0e0e0;
+  border-radius: 0px;
+  font-size: 18px;
+  padding: 10px 150px 10px 15px;
+  margin-bottom: 20px;
+
+`
 const TodoApplication = () => {
   const [inputValue, setInputValue] = useState("");
 
@@ -60,32 +82,28 @@ const TodoApplication = () => {
     setTodoArray([...todoArray, newItem]);
     setInputValue("");
   }
-
-  function taskCount() {
-    if(todoArray.length == 1) {
-      document.getElementById('task-count').innerHTML ="task"
+  
+  const [taskCounter, setTaskCounter] = useState('You have no tasks.')
+  useEffect(() => {
+    if(todoArray.length == 0) {
+      setTaskCounter(`You have no tasks.`)
+    } else if(todoArray.length == 1) {
+      setTaskCounter(`You have ${todoArray.length} task to complete`)
+    } else if(todoArray.length >= 2) {
+      setTaskCounter(`You have ${todoArray.length} tasks to complete`)
     }
-    
-    // else if(todoArray.length == 0) {
-    //   document.getElementById('task-count').innerHTML = "no tasks!"
-    // }
-
-    else if(todoArray.length >= 2) {
-      document.getElementById('task-count').innerHTML ="tasks"
-    }
-  }
-
-  taskCount()
+  }, [todoArray])
 
   return (
     <TodoApplicationContainer darkmode={darkmode}>
-    <input type="checkbox" checked={darkmode} onChange={() =>setDarkmode(d => !d)}/> Dark / Light
+      <input type="checkbox" checked={darkmode} onChange={() =>setDarkmode(d => !d)}/> Dark / Light
       <h1>Your tasks</h1>
-      <h2>You have {todoArray.length} <span id="task-count">tasks</span> to complete</h2>
-      <TodoList todoArray={todoArray} setTodoArray={setTodoArray}/>
-      <input onChange={textInput} value={inputValue} type="text"></input>
-      <button onClick={addTodo}> Add item </button>
-    </TodoApplicationContainer>
+      <h2>{taskCounter}</h2>
+      <TaskInput placeholder="Add a new task"  onChange={textInput} value={inputValue} type="text"></TaskInput>
+      <TaskInputButton onClick={addTodo}> + </TaskInputButton>
+
+    <TodoList todoArray={todoArray} setTodoArray={setTodoArray}/>
+    </TodoApplicationContainer>>
   );
 };
 

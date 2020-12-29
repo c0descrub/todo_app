@@ -1,3 +1,5 @@
+import styled from "styled-components";
+
 const TodoList = (props) => {
 
     const todoArray = props.todoArray
@@ -32,20 +34,57 @@ const TodoList = (props) => {
         setTodoArray(newArraywithCompletedItem)
     }
 
+    const TaskList = styled.div`
+    div {
+        background: #e0e0e0;
+        width:99%;
+        margin: 0 auto;
+        height: 40px;
+        display: flex;
+        justify-content: flex-end;
+        align-items: center;
+        margin-bottom: 10px;
+        color: #111111;
+        
+    }
+
+    button {
+        height: 100%;
+        border-radius: 0px;
+        border: none;
+        color: white;
+        :focus-visible {
+            border: none;
+        }
+
+    }
+    p {
+        width: 100%;
+    }
+    `
+    const StateButton = styled.button`
+    background: #68bd57;
+    width: 100px;
+    `
+    const DeleteButton = styled.button`
+
+    background: #8a1a1a;
+    
+    `
     return (
-        <div>
+        <TaskList>
             {todoArray.map((item, index) => {
                 return (
                     <div key={index}>
-                    <button onClick={() => handleComplete(index)}>
-                        {item.completed ? 'Completed' : 'mark as complete'}
-                    </button>
-                    {item.name} 
-                        <button onClick={() => handleDelete(index)}> Delete </button>
+                    <p>{item.name}</p>
+                    <StateButton onClick={() => handleComplete(index)}>
+                        {item.completed ? 'Task complete!' : 'Mark as complete'}
+                    </StateButton>
+                    <DeleteButton onClick={() => handleDelete(index)}> Delete </DeleteButton>
                     </div>
                 )
             })}
-        </div>
+        </TaskList>
     )
 }
 
